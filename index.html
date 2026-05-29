@@ -863,4 +863,54 @@
     updateModel();
 </script>
 </body>
-</html>
+</html><div class="card">
+  <h2>Equity vs Debt</h2>
+  <canvas id="equityDebtChart"></canvas>
+</div>
+
+<!-- Load Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+  const ctx = document.getElementById('equityDebtChart');
+
+  new Chart(ctx, {
+    type: 'pie',
+    data: {
+      labels: ['Equity', 'Debt'],
+      datasets: [{
+        label: 'Capital Structure',
+        data: [60, 40], // Replace with your actual values
+        backgroundColor: [
+          '#004080', // Blue for Equity
+          '#008000'  // Green for Debt
+        ],
+        borderColor: '#FFD700', // Yellow accent border
+        borderWidth: 2
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        legend: {
+          position: 'bottom',
+          labels: {
+            color: '#333',
+            font: {
+              size: 14
+            }
+          }
+        },
+        title: {
+          display: true,
+          text: 'Equity vs Debt Breakdown',
+          color: '#004080',
+          font: {
+            size: 18,
+            weight: 'bold'
+          }
+        }
+      }
+    }
+  });
+</script>
