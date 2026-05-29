@@ -1,0 +1,867 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><link rel="stylesheet" href="style.css">
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Multifamily Development | BOTE Investment Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <style>
+        :root {
+            --primary: #0b4f2e;
+            --primary-dark: #073820;
+            --primary-light: #e8f3ed;
+            --secondary: #1e4d6f;
+            --accent: #d4a13e;
+            --blue-input: #eef2ff;
+            --blue-border: #818cf8;
+            --gray-50: #f8fafc;
+            --gray-100: #f1f5f9;
+            --gray-200: #e2e8f0;
+            --gray-300: #cbd5e1;
+            --gray-400: #94a3b8;
+            --gray-500: #64748b;
+            --gray-600: #475569;
+            --gray-700: #334155;
+            --gray-800: #1e293b;
+            --red: #dc2626;
+            --green: #16a34a;
+            --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+            --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+            --radius-sm: 0.5rem;
+            --radius-md: 0.75rem;
+            --radius-lg: 1rem;
+            --radius-xl: 1.5rem;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--gray-100);
+            color: var(--gray-800);
+            line-height: 1.5;
+        }
+
+        .app {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+            padding: 0 32px;
+        }
+
+        /* Header */
+        .header {
+            background: white;
+            border-bottom: 1px solid var(--gray-200);
+            padding: 20px 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            backdrop-filter: blur(10px);
+            background: rgba(255,255,255,0.95);
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+
+        .logo h1 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .logo p {
+            font-size: 0.75rem;
+            color: var(--gray-500);
+            margin-top: 4px;
+        }
+
+        .badge-container {
+            display: flex;
+            gap: 12px;
+        }
+
+        .badge {
+            background: var(--gray-100);
+            padding: 8px 16px;
+            border-radius: 40px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            color: var(--gray-600);
+        }
+
+        .badge i {
+            margin-right: 6px;
+            color: var(--primary);
+        }
+
+        /* Guide Panel */
+        .guide-panel {
+            background: linear-gradient(135deg, var(--primary-light), white);
+            border-radius: var(--radius-lg);
+            padding: 20px 28px;
+            margin: 24px 0;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            gap: 20px;
+            border: 1px solid var(--gray-200);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .guide-text h3 {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 6px;
+        }
+
+        .guide-text p {
+            font-size: 0.875rem;
+            color: var(--gray-600);
+        }
+
+        /* Grid Systems */
+        .grid-2 {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 24px;
+            margin-bottom: 24px;
+        }
+
+        .grid-3 {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
+            margin-bottom: 24px;
+        }
+
+        @media (max-width: 1200px) {
+            .grid-3 { grid-template-columns: repeat(2, 1fr); }
+            .grid-2 { grid-template-columns: 1fr; }
+        }
+
+        @media (max-width: 768px) {
+            .container { padding: 0 16px; }
+            .grid-3 { grid-template-columns: 1fr; }
+        }
+
+        /* Cards */
+        .card {
+            background: white;
+            border-radius: var(--radius-xl);
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--gray-200);
+            overflow: hidden;
+            transition: all 0.2s ease;
+        }
+
+        .card:hover {
+            box-shadow: var(--shadow-md);
+        }
+
+        .card-header {
+            padding: 18px 24px;
+            border-bottom: 1px solid var(--gray-200);
+            background: white;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .card-header i {
+            font-size: 1.25rem;
+            color: var(--primary);
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--primary-light);
+            border-radius: var(--radius-sm);
+        }
+
+        .card-header h2 {
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: var(--gray-800);
+        }
+
+        .card-body {
+            padding: 20px 24px;
+        }
+
+        /* Form Elements - BLUE INPUTS */
+        .input-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid var(--gray-100);
+        }
+
+        .input-row label {
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: var(--gray-600);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .input-row label i {
+            font-size: 0.75rem;
+            color: var(--gray-400);
+            cursor: help;
+        }
+
+        .input-row input {
+            width: 140px;
+            padding: 8px 12px;
+            border: 2px solid var(--blue-border);
+            border-radius: var(--radius-sm);
+            font-size: 0.875rem;
+            font-weight: 500;
+            font-family: 'Inter', monospace;
+            text-align: right;
+            transition: all 0.2s;
+            background: var(--blue-input);
+            color: var(--gray-800);
+        }
+
+        .input-row input:focus {
+            outline: none;
+            border-color: var(--primary);
+            background: white;
+            box-shadow: 0 0 0 3px rgba(11,79,46,0.1);
+        }
+
+        .input-row input:hover {
+            background: #e6e9ff;
+            border-color: var(--primary);
+        }
+
+        /* Metric Display */
+        .metric-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid var(--gray-100);
+        }
+
+        .metric-row:last-child {
+            border-bottom: none;
+        }
+
+        .metric-label {
+            font-size: 0.875rem;
+            color: var(--gray-600);
+            font-weight: 500;
+        }
+
+        .metric-value {
+            font-size: 0.875rem;
+            font-weight: 700;
+            color: var(--gray-800);
+        }
+
+        .metric-value.negative {
+            color: var(--red);
+        }
+
+        .metric-value.highlight {
+            font-size: 1.125rem;
+            color: var(--primary);
+            font-weight: 800;
+        }
+
+        .divider-light {
+            height: 1px;
+            background: var(--gray-200);
+            margin: 16px 0;
+        }
+
+        /* KPI Cards */
+        .kpi-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+            margin-bottom: 24px;
+        }
+
+        .kpi-card {
+            background: white;
+            border-radius: var(--radius-lg);
+            padding: 20px;
+            border: 1px solid var(--gray-200);
+            transition: all 0.2s;
+        }
+
+        .kpi-card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .kpi-label {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-weight: 600;
+            color: var(--gray-500);
+            margin-bottom: 8px;
+        }
+
+        .kpi-value {
+            font-size: 1.75rem;
+            font-weight: 800;
+            color: var(--gray-800);
+        }
+
+        .kpi-value.small {
+            font-size: 1.25rem;
+        }
+
+        .kpi-trend {
+            font-size: 0.75rem;
+            margin-top: 8px;
+            color: var(--gray-500);
+        }
+
+        .trend-up { color: var(--green); }
+        .trend-down { color: var(--red); }
+
+        /* Charts */
+        .chart-container {
+            margin-top: 8px;
+        }
+
+        canvas {
+            max-height: 240px;
+            width: 100%;
+        }
+
+        /* Tooltip */
+        [data-tooltip] {
+            position: relative;
+            cursor: help;
+        }
+
+        [data-tooltip]:before {
+            content: attr(data-tooltip);
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 6px 12px;
+            background: var(--gray-800);
+            color: white;
+            font-size: 0.75rem;
+            border-radius: var(--radius-sm);
+            white-space: nowrap;
+            display: none;
+            z-index: 1000;
+            margin-bottom: 8px;
+        }
+
+        [data-tooltip]:hover:before {
+            display: block;
+        }
+
+        /* Footer */
+        .footer {
+            background: white;
+            border-top: 1px solid var(--gray-200);
+            padding: 20px 0;
+            margin-top: 40px;
+            text-align: center;
+            font-size: 0.75rem;
+            color: var(--gray-500);
+        }
+
+        hr {
+            margin: 20px 0;
+            border: none;
+            border-top: 1px solid var(--gray-200);
+        }
+    </style>
+</head>
+<body>
+<div class="app">
+    <div class="header">
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <h1><i class="fas fa-building" style="color: var(--primary);"></i> Multifamily BOTE</h1>
+                    <p>Back of the Envelope Development Analysis</p>
+                </div>
+                <div class="badge-container">
+                    <div class="badge"><i class="fas fa-chart-line"></i> Real-time</div>
+                    <div class="badge"><i class="fas fa-edit"></i> Editable inputs</div>
+                    <div class="badge"><i class="fas fa-download"></i> Export ready</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <!-- Guide Panel - Removed target spread -->
+        <div class="guide-panel">
+            <div class="guide-text">
+                <h3><i class="fas fa-lightbulb"></i> Interactive Investment Model</h3>
+                <p>Adjust any <strong style="color: var(--primary);">blue input cell</strong> below — all metrics update instantly. Expenses appear in <span style="color: var(--red);">(red brackets)</span>.</p>
+            </div>
+        </div>
+
+        <!-- KPI Row -->
+        <div class="kpi-grid">
+            <div class="kpi-card">
+                <div class="kpi-label">Development Yield</div>
+                <div class="kpi-value" id="kpiDevYield">--</div>
+                <div class="kpi-trend">Untrended NOI / Total Cost</div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-label">Exit Cap Rate</div>
+                <div class="kpi-value" id="kpiExitCap">--</div>
+                <div class="kpi-trend">Upon sale</div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-label">Development Spread</div>
+                <div class="kpi-value" id="kpiSpread" style="color: var(--accent);">--</div>
+                <div class="kpi-trend trend-up">Value creation metric</div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-label">Equity Multiple</div>
+                <div class="kpi-value" id="kpiMultiple">--</div>
+                <div class="kpi-trend">Net proceeds / Equity</div>
+            </div>
+        </div>
+
+        <!-- Main Grid -->
+        <div class="grid-3">
+            <!-- Unit Mix Card -->
+            <div class="card">
+                <div class="card-header">
+                    <i class="fas fa-bed"></i>
+                    <h2>Unit Mix & Rental Income</h2>
+                </div>
+                <div class="card-body">
+                    <div class="input-row">
+                        <label><i class="fas fa-1" data-tooltip="Number of units"></i> 1BR / 1BA</label>
+                        <input type="number" id="units1br" value="15" step="1">
+                    </div>
+                    <div class="input-row">
+                        <label><i class="fas fa-dollar-sign" data-tooltip="Monthly rent per unit"></i> Avg Rent / Month</label>
+                        <input type="number" id="rent1br" value="750" step="50">
+                    </div>
+                    <div class="input-row">
+                        <label>2BR / 2BA (A)</label>
+                        <input type="number" id="units2br_a" value="30" step="1">
+                    </div>
+                    <div class="input-row">
+                        <label>Avg Rent / Month</label>
+                        <input type="number" id="rent2br_a" value="1000" step="50">
+                    </div>
+                    <div class="input-row">
+                        <label>2BR / 2BA (B)</label>
+                        <input type="number" id="units2br_b" value="45" step="1">
+                    </div>
+                    <div class="input-row">
+                        <label>Avg Rent / Month</label>
+                        <input type="number" id="rent2br_b" value="1250" step="50">
+                    </div>
+                    <div class="input-row">
+                        <label>3BR / 3BA</label>
+                        <input type="number" id="units3br" value="60" step="1">
+                    </div>
+                    <div class="input-row">
+                        <label>Avg Rent / Month</label>
+                        <input type="number" id="rent3br" value="1500" step="50">
+                    </div>
+                    <hr>
+                    <div class="metric-row">
+                        <span class="metric-label">Total Units</span>
+                        <span class="metric-value" id="totalUnits">--</span>
+                    </div>
+                    <div class="metric-row">
+                        <span class="metric-label">Blended Rent/Unit</span>
+                        <span class="metric-value" id="blendedRent">--</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Operating & Costs Card -->
+            <div class="card">
+                <div class="card-header">
+                    <i class="fas fa-chart-pie"></i>
+                    <h2>Operations & Expenses</h2>
+                </div>
+                <div class="card-body">
+                    <div class="input-row">
+                        <label>Other Income ($/unit/yr)</label>
+                        <input type="number" id="otherIncomePerUnit" value="600" step="50">
+                    </div>
+                    <div class="input-row">
+                        <label>Vacancy & Credit Loss (%)</label>
+                        <input type="number" id="vacancyPct" value="9" step="0.5">
+                    </div>
+                    <div class="input-row">
+                        <label>RE Taxes & Insurance ($/unit/yr)</label>
+                        <input type="number" id="taxInsurance" value="1500" step="100">
+                    </div>
+                    <div class="input-row">
+                        <label>Operating Expenses ($/unit/yr)</label>
+                        <input type="number" id="opExPerUnit" value="4000" step="200">
+                    </div>
+                    <div class="input-row">
+                        <label>Annual NOI Growth (%)</label>
+                        <input type="number" id="noiGrowth" value="3" step="0.5">
+                    </div>
+                    <hr>
+                    <div class="metric-row">
+                        <span class="metric-label">Potential Gross Income</span>
+                        <span class="metric-value" id="pgiDisplay">--</span>
+                    </div>
+                    <div class="metric-row">
+                        <span class="metric-label">Effective Gross Income</span>
+                        <span class="metric-value" id="egiDisplay">--</span>
+                    </div>
+                    <div class="metric-row">
+                        <span class="metric-label">Net Operating Income</span>
+                        <span class="metric-value highlight" id="noiUntrended">--</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Development Costs Card -->
+            <div class="card">
+                <div class="card-header">
+                    <i class="fas fa-hard-hat"></i>
+                    <h2>Development Costs</h2>
+                </div>
+                <div class="card-body">
+                    <div class="input-row">
+                        <label>Land Cost ($)</label>
+                        <input type="number" id="landCost" value="6000000" step="500000">
+                    </div>
+                    <div class="input-row">
+                        <label>Hard Cost per Unit ($)</label>
+                        <input type="number" id="hardCostPerUnit" value="40000" step="5000">
+                    </div>
+                    <div class="input-row">
+                        <label>Hard Cost Contingency (%)</label>
+                        <input type="number" id="hardContingency" value="10" step="1">
+                    </div>
+                    <div class="input-row">
+                        <label>Soft Costs ($)</label>
+                        <input type="number" id="softCosts" value="1800000" step="200000">
+                    </div>
+                    <div class="input-row">
+                        <label>Soft Cost Contingency (%)</label>
+                        <input type="number" id="softContingency" value="10" step="1">
+                    </div>
+                    <div class="input-row">
+                        <label>Construction Loan Rate (%)</label>
+                        <input type="number" id="constrRate" value="6.5" step="0.25">
+                    </div>
+                    <hr>
+                    <div class="metric-row">
+                        <span class="metric-label">Total Project Cost</span>
+                        <span class="metric-value" id="totalProjectCost">--</span>
+                    </div>
+                    <div class="metric-row">
+                        <span class="metric-label">Cost Per Unit</span>
+                        <span class="metric-value" id="costPerUnit">--</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Second Row -->
+        <div class="grid-2">
+            <!-- Financing & Exit -->
+            <div class="card">
+                <div class="card-header">
+                    <i class="fas fa-hand-holding-usd"></i>
+                    <h2>Financing & Exit Assumptions</h2>
+                </div>
+                <div class="card-body">
+                    <div class="input-row">
+                        <label>Pre-construction (months)</label>
+                        <input type="number" id="preConMonths" value="6" step="1">
+                    </div>
+                    <div class="input-row">
+                        <label>Construction (months)</label>
+                        <input type="number" id="constrMonths" value="18" step="1">
+                    </div>
+                    <div class="input-row">
+                        <label>Lease-up (months)</label>
+                        <input type="number" id="leaseUpMonths" value="25" step="1">
+                    </div>
+                    <div class="input-row">
+                        <label>Senior Loan LTC (%)</label>
+                        <input type="number" id="loanPct" value="70" step="5">
+                    </div>
+                    <div class="input-row">
+                        <label>Exit Cap Rate (%)</label>
+                        <input type="number" id="exitCap" value="7.0" step="0.25">
+                    </div>
+                    <div class="input-row">
+                        <label>Selling Costs (%)</label>
+                        <input type="number" id="sellingCostsPct" value="5" step="0.5">
+                    </div>
+                    <hr>
+                    <div class="metric-row">
+                        <span class="metric-label">Senior Loan Amount</span>
+                        <span class="metric-value" id="loanAmount">--</span>
+                    </div>
+                    <div class="metric-row">
+                        <span class="metric-label">Required Equity</span>
+                        <span class="metric-value" id="requiredEquity">--</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Returns & Exit Analysis -->
+            <div class="card">
+                <div class="card-header">
+                    <i class="fas fa-chart-line"></i>
+                    <h2>Returns & Exit Analysis</h2>
+                </div>
+                <div class="card-body">
+                    <div class="metric-row">
+                        <span class="metric-label">Exit Month</span>
+                        <span class="metric-value" id="exitMonth">--</span>
+                    </div>
+                    <div class="metric-row">
+                        <span class="metric-label">NOI at Exit (Trended)</span>
+                        <span class="metric-value" id="noiExit">--</span>
+                    </div>
+                    <div class="metric-row">
+                        <span class="metric-label">Gross Sales Price</span>
+                        <span class="metric-value" id="grossSales">--</span>
+                    </div>
+                    <div class="metric-row">
+                        <span class="metric-label">Selling Costs</span>
+                        <span class="metric-value negative" id="sellingCostsVal">--</span>
+                    </div>
+                    <div class="metric-row">
+                        <span class="metric-label">Net Sales Proceeds</span>
+                        <span class="metric-value highlight" id="netProceeds">--</span>
+                    </div>
+                    <hr>
+                    <div class="metric-row">
+                        <span class="metric-label">Net Profit</span>
+                        <span class="metric-value" id="netProfit">--</span>
+                    </div>
+                    <div class="metric-row">
+                        <span class="metric-label">Equity Multiple</span>
+                        <span class="metric-value" id="equityMultiple">--</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Charts Row -->
+        <div class="grid-2">
+            <div class="card">
+                <div class="card-header">
+                    <i class="fas fa-chart-column"></i>
+                    <h2>NOI Progression</h2>
+                </div>
+                <div class="card-body">
+                    <div class="chart-container">
+                        <canvas id="noiProgressionChart" height="200"></canvas>
+                    </div>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-header">
+                    <i class="fas fa-chart-pie"></i>
+                    <h2>Cost Breakdown</h2>
+                </div>
+                <div class="card-body">
+                    <div class="chart-container">
+                        <canvas id="costBreakdownChart" height="200"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer">
+        <div class="container">
+            <i class="fas fa-calculator"></i> Multifamily Back of the Envelope Analysis | Development Spread = Exit Cap Rate - Stabilized Yield | All figures in USD
+        </div>
+    </div>
+</div>
+
+<script>
+    const formatUSD = (val) => '$' + val.toLocaleString(undefined, {minimumFractionDigits: 0, maximumFractionDigits: 0});
+    const formatPct = (val) => val.toFixed(2) + '%';
+    const formatNegative = (val) => val >= 0 ? formatUSD(val) : '(' + formatUSD(Math.abs(val)) + ')';
+
+    function updateModel() {
+        // Units
+        let u1 = +document.getElementById('units1br').value || 0;
+        let r1 = +document.getElementById('rent1br').value || 0;
+        let u2a = +document.getElementById('units2br_a').value || 0;
+        let r2a = +document.getElementById('rent2br_a').value || 0;
+        let u2b = +document.getElementById('units2br_b').value || 0;
+        let r2b = +document.getElementById('rent2br_b').value || 0;
+        let u3 = +document.getElementById('units3br').value || 0;
+        let r3 = +document.getElementById('rent3br').value || 0;
+
+        let totalUnits = u1 + u2a + u2b + u3;
+        let totalRent = (u1*r1 + u2a*r2a + u2b*r2b + u3*r3) * 12;
+        let blendedRent = totalUnits ? (u1*r1 + u2a*r2a + u2b*r2b + u3*r3) / totalUnits : 0;
+
+        document.getElementById('totalUnits').innerText = totalUnits;
+        document.getElementById('blendedRent').innerText = formatUSD(blendedRent);
+
+        // Income Statement
+        let otherPerUnit = +document.getElementById('otherIncomePerUnit').value || 0;
+        let otherIncome = otherPerUnit * totalUnits;
+        let vacancyPct = (+document.getElementById('vacancyPct').value || 0) / 100;
+        let pgi = totalRent + otherIncome;
+        let vacancyLoss = -pgi * vacancyPct;
+        let egi = pgi + vacancyLoss;
+
+        let taxPerUnit = +document.getElementById('taxInsurance').value || 0;
+        let opexPerUnit = +document.getElementById('opExPerUnit').value || 0;
+        let totalTax = taxPerUnit * totalUnits;
+        let totalOpex = opexPerUnit * totalUnits;
+        let totalExpenses = totalTax + totalOpex;
+        let noiUntrended = egi - totalExpenses;
+
+        document.getElementById('pgiDisplay').innerText = formatUSD(pgi);
+        document.getElementById('egiDisplay').innerText = formatUSD(egi);
+        document.getElementById('noiUntrended').innerHTML = formatUSD(noiUntrended);
+
+        // Development Costs
+        let land = +document.getElementById('landCost').value || 0;
+        let hardPerUnit = +document.getElementById('hardCostPerUnit').value || 0;
+        let hardBase = hardPerUnit * totalUnits;
+        let hardCont = (+document.getElementById('hardContingency').value || 0) / 100;
+        let hardTotal = hardBase * (1 + hardCont);
+
+        let softBase = +document.getElementById('softCosts').value || 0;
+        let softCont = (+document.getElementById('softContingency').value || 0) / 100;
+        let softTotal = softBase * (1 + softCont);
+
+        let constrRate = (+document.getElementById('constrRate').value || 0) / 100;
+        let constrMonths = +document.getElementById('constrMonths').value || 18;
+        let preMonths = +document.getElementById('preConMonths').value || 6;
+        let leaseUp = +document.getElementById('leaseUpMonths').value || 25;
+        let totalTimeline = preMonths + constrMonths + leaseUp;
+
+        let avgCostBasis = (land + hardTotal + softTotal) * 0.6;
+        let constrInterest = avgCostBasis * (constrRate / 12) * constrMonths;
+        let monthlyNOI = noiUntrended / 12;
+        let operatingDeficit = monthlyNOI * leaseUp * 0.65;
+        let totalProjectCost = land + hardTotal + softTotal + constrInterest + operatingDeficit;
+        let costPerUnit = totalProjectCost / totalUnits;
+
+        let loanPct = (+document.getElementById('loanPct').value || 0) / 100;
+        let seniorLoan = totalProjectCost * loanPct;
+        let requiredEquity = totalProjectCost - seniorLoan;
+
+        document.getElementById('totalProjectCost').innerText = formatUSD(totalProjectCost);
+        document.getElementById('costPerUnit').innerText = formatUSD(costPerUnit);
+        document.getElementById('loanAmount').innerText = formatUSD(seniorLoan);
+        document.getElementById('requiredEquity').innerText = formatUSD(requiredEquity);
+
+        // Exit
+        let noiGrowth = (+document.getElementById('noiGrowth').value || 0) / 100;
+        let exitMonth = totalTimeline;
+        let noiExit = noiUntrended * Math.pow(1 + noiGrowth, exitMonth / 12);
+        let exitCap = (+document.getElementById('exitCap').value || 7) / 100;
+        let sellingPct = (+document.getElementById('sellingCostsPct').value || 5) / 100;
+        let grossSales = noiExit / exitCap;
+        let sellingCosts = grossSales * sellingPct;
+        let netProceeds = grossSales - sellingCosts;
+
+        let devYieldUntrended = noiUntrended / totalProjectCost;
+        let devYieldTrended = noiExit / totalProjectCost;
+        let netProfit = netProceeds - totalProjectCost;
+        let equityMultiple = netProceeds / requiredEquity;
+        let devSpread = (exitCap * 100) - (devYieldUntrended * 100);
+
+        // Update DOM
+        document.getElementById('exitMonth').innerText = exitMonth;
+        document.getElementById('noiExit').innerText = formatUSD(noiExit);
+        document.getElementById('grossSales').innerText = formatUSD(grossSales);
+        document.getElementById('sellingCostsVal').innerHTML = formatNegative(-sellingCosts);
+        document.getElementById('netProceeds').innerText = formatUSD(netProceeds);
+        document.getElementById('netProfit').innerText = formatUSD(netProfit);
+        document.getElementById('equityMultiple').innerText = equityMultiple.toFixed(2) + 'x';
+
+        // KPI cards
+        document.getElementById('kpiDevYield').innerHTML = formatPct(devYieldUntrended * 100);
+        document.getElementById('kpiExitCap').innerHTML = formatPct(exitCap * 100);
+        document.getElementById('kpiSpread').innerHTML = formatPct(devSpread);
+        document.getElementById('kpiMultiple').innerHTML = equityMultiple.toFixed(2) + 'x';
+
+        // Colors for spread
+        const spreadEl = document.getElementById('kpiSpread');
+        if (devSpread >= 2.5) spreadEl.style.color = '#16a34a';
+        else if (devSpread >= 1.5) spreadEl.style.color = '#d4a13e';
+        else spreadEl.style.color = '#dc2626';
+
+        // Update charts
+        updateCharts(noiUntrended, noiExit, land, hardTotal, softTotal, constrInterest, operatingDeficit);
+    }
+
+    let noiChart, costChart;
+    function updateCharts(noiUntrended, noiExit, land, hard, soft, constrInt, opDeficit) {
+        const ctx1 = document.getElementById('noiProgressionChart').getContext('2d');
+        const ctx2 = document.getElementById('costBreakdownChart').getContext('2d');
+        if (noiChart) noiChart.destroy();
+        if (costChart) costChart.destroy();
+
+        noiChart = new Chart(ctx1, {
+            type: 'bar',
+            data: {
+                labels: ['Stabilized NOI', 'NOI at Exit'],
+                datasets: [{ label: 'Net Operating Income', data: [noiUntrended, noiExit], backgroundColor: ['#0b4f2e', '#1e4d6f'], borderRadius: 8 }]
+            },
+            options: { responsive: true, maintainAspectRatio: true, plugins: { tooltip: { callbacks: { label: (ctx) => '$' + ctx.raw.toLocaleString() } } }, scales: { y: { ticks: { callback: (val) => '$' + (val/1e6).toFixed(1) + 'M' } } } }
+        });
+
+        costChart = new Chart(ctx2, {
+            type: 'doughnut',
+            data: {
+                labels: ['Land', 'Hard Costs', 'Soft Costs', 'Construction Interest', 'Operating Deficit'],
+                datasets: [{ data: [land, hard, soft, constrInt, opDeficit], backgroundColor: ['#0b4f2e', '#2d6a4f', '#40916c', '#74c69d', '#a7e0c0'], borderWidth: 0 }]
+            },
+            options: { responsive: true, plugins: { legend: { position: 'bottom', labels: { font: { size: 11 } } }, tooltip: { callbacks: { label: (ctx) => ctx.label + ': $' + ctx.raw.toLocaleString() } } } }
+        });
+    }
+
+    // Attach listeners
+    document.querySelectorAll('input').forEach(input => input.addEventListener('input', updateModel));
+    updateModel();
+</script>
+</body>
+</html>
