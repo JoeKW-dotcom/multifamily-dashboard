@@ -20,65 +20,51 @@
   <!-- Title -->
   <h1>Multifamily Investment Dashboard</h1>
 
-  <!-- Equity vs Debt Pie Chart -->
+  <!-- Model Inputs -->
   <div class="card">
-    <h2>Equity vs Debt</h2>
-    <canvas id="equityDebtChart"></canvas>
+    <h2>Model Inputs</h2>
+    <table>
+      <tr><th>Category</th><th>Value</th></tr>
+      <tr><td>1BR / 1BA Units</td><td>15 @ $750</td></tr>
+      <tr><td>2BR / 2BA (A)</td><td>30 @ $1,000</td></tr>
+      <tr><td>2BR / 2BA (B)</td><td>45 @ $1,250</td></tr>
+      <tr><td>3BR / 3BA</td><td>60 @ $1,500</td></tr>
+      <tr><td>Other Income</td><td>$600/unit/yr</td></tr>
+      <tr><td>Vacancy & Credit Loss</td><td>9%</td></tr>
+      <tr><td>RE Taxes & Insurance</td><td>$1,500/unit/yr</td></tr>
+      <tr><td>Operating Expenses</td><td>$4,000/unit/yr</td></tr>
+      <tr><td>Annual NOI Growth</td><td>3%</td></tr>
+      <tr><td>Land Cost</td><td>$6,000,000</td></tr>
+      <tr><td>Hard Cost per Unit</td><td>$40,000</td></tr>
+      <tr><td>Hard Cost Contingency</td><td>10%</td></tr>
+      <tr><td>Soft Costs</td><td>$1,800,000</td></tr>
+      <tr><td>Soft Cost Contingency</td><td>10%</td></tr>
+      <tr><td>Construction Loan Interest</td><td>6.5%</td></tr>
+    </table>
   </div>
 
   <!-- Operating Statement -->
   <div class="card">
     <h2>Operating Statement (Pro‑Forma)</h2>
     <table>
-      <tr>
-        <th>Category</th>
-        <th>Amount</th>
-      </tr>
-      <!-- Income -->
-      <tr>
-        <td><strong>Gross Rental Income</strong></td>
-        <td>$X,XXX</td>
-      </tr>
-      <tr>
-        <td>Other Income</td>
-        <td>$600</td>
-      </tr>
-      <tr>
-        <td>Vacancy & Credit Loss (9%)</td>
-        <td>($XXX)</td>
-      </tr>
-      <tr>
-        <td><strong>Total Effective Income</strong></td>
-        <td><strong>$X,XXX</strong></td>
-      </tr>
-      <!-- Expenses -->
-      <tr>
-        <td>Operating Expenses</td>
-        <td>$4,000</td>
-      </tr>
-      <tr>
-        <td>RE Taxes & Insurance</td>
-        <td>$1,500</td>
-      </tr>
-      <tr>
-        <td><strong>Total Expenses</strong></td>
-        <td><strong>$X,XXX</strong></td>
-      </tr>
-      <!-- NOI -->
-      <tr>
-        <td><strong>Net Operating Income (NOI)</strong></td>
-        <td><strong>$X,XXX</strong></td>
-      </tr>
-      <!-- Debt Service -->
-      <tr>
-        <td>Debt Service</td>
-        <td>$X,XXX</td>
-      </tr>
-      <tr>
-        <td><strong>Cash Flow Before Taxes</strong></td>
-        <td><strong>$X,XXX</strong></td>
-      </tr>
+      <tr><th>Category</th><th>Amount</th></tr>
+      <tr><td><strong>Gross Rental Income</strong></td><td>$X,XXX</td></tr>
+      <tr><td>Other Income</td><td>$600</td></tr>
+      <tr><td>Vacancy & Credit Loss (9%)</td><td>($XXX)</td></tr>
+      <tr><td><strong>Total Effective Income</strong></td><td><strong>$X,XXX</strong></td></tr>
+      <tr><td>Operating Expenses</td><td>$4,000</td></tr>
+      <tr><td>RE Taxes & Insurance</td><td>$1,500</td></tr>
+      <tr><td><strong>Total Expenses</strong></td><td><strong>$X,XXX</strong></td></tr>
+      <tr><td><strong>Net Operating Income (NOI)</strong></td><td><strong>$X,XXX</strong></td></tr>
+      <tr><td>Debt Service</td><td>$X,XXX</td></tr>
+      <tr><td><strong>Cash Flow Before Taxes</strong></td><td><strong>$X,XXX</strong></td></tr>
     </table>
+  </div>
+
+  <!-- Equity vs Debt Pie Chart (at bottom) -->
+  <div class="card">
+    <h2>Equity vs Debt</h2>
+    <canvas id="equityDebtChart"></canvas>
   </div>
 
   <!-- Footer -->
@@ -89,7 +75,6 @@
   <!-- Chart Script -->
   <script>
     const ctx = document.getElementById('equityDebtChart');
-
     new Chart(ctx, {
       type: 'pie',
       data: {
@@ -124,10 +109,7 @@
             display: true,
             text: 'Equity vs Debt Breakdown',
             color: '#FFD700',
-            font: {
-              size: 18,
-              weight: 'bold'
-            }
+            font: { size: 18, weight: 'bold' }
           }
         }
       }
